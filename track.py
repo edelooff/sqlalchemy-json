@@ -45,6 +45,7 @@ class TrackedObject(object):
     instance of the decorated class.
     """
     def decorator(tracked_type):
+      """Adds the decorated class to the `_type_mapping` dictionary."""
       cls._type_mapping[origin_type] = tracked_type
       return tracked_type
     return decorator
@@ -57,9 +58,9 @@ class TrackedObject(object):
     provided parent.
     """
     obj_type = type(obj)
-    for type_, converter in cls._type_mapping.iteritems():
-      if obj_type is type_:
-        new = converter(obj)
+    for origin_type, replacement in cls._type_mapping.iteritems():
+      if obj_type is origin_type:
+        new = replacement(obj)
         new.parent = parent
         return new
     return obj
