@@ -14,8 +14,9 @@ import logging
 
 class TrackedObject(object):
   """A base class for delegated change-tracking."""
+  _type_mapping = {}
   parent = None
-  
+
   def __init__(self, *args, **kwds):
     self.logger = logging.getLogger(type(self).__name__)
     self.logger.debug('%s: __init__' % self._repr())
@@ -35,6 +36,34 @@ class TrackedObject(object):
     if self.parent is not None:
       self.parent.changed()
 
+  @classmethod
+  def register(cls, origin_type):
+    """Registers the class decorated with this method as a mutation tracker.
+
+    The provided `origin_type` is mapped to the decorated class such that
+    future calls to `convert()` will convert the object of `origin_type` to an
+    instance of the decorated class.
+    """
+    def decorator(tracked_type):
+      cls._type_mapping[origin_type] = tracked_type
+      return tracked_type
+    return decorator
+
+  @classmethod
+  def convert(cls, obj, parent):
+    """Converts objects to tracked types.
+
+    This allows the new structure to track changes and propagate them to the
+    provided parent.
+    """
+    obj_type = type(obj)
+    for type_, converter in cls._type_mapping.iteritems():
+      if obj_type is type_:
+        new = converter(obj)
+        new.parent = parent
+        return new
+    return obj
+
   def _repr(self):
     """Object representation that includes the memory address."""
     return '<%(namespace)s.%(type)s object at 0x%(address)0xd>' % {
@@ -44,7 +73,7 @@ class TrackedObject(object):
 
   def _track(self, value):
     """Convencience method to call `convert_to_tracked` for a given value."""
-    return convert_to_tracked(value, self)
+    return self.convert(value, self)
 
   def _track_iterable(self, iterable):
     """Returns a generator that performs `_track` on every of its members."""
@@ -61,6 +90,7 @@ class TrackedObject(object):
     return self._track_iteritems(mapping)
 
 
+@TrackedObject.register(dict)
 class TrackedDict(TrackedObject, dict):
   """A TrackedObject implementation of the basic dictionary."""
   def __init__(self, source=(), **kwds):
@@ -83,6 +113,7 @@ class TrackedDict(TrackedObject, dict):
         self._track_mapping(kwds)))
 
 
+@TrackedObject.register(list)
 class TrackedList(TrackedObject, list):
   """A TrackedObject implementation of the basic list."""
   def __init__(self, iterable=()):
@@ -107,17 +138,3 @@ class TrackedList(TrackedObject, list):
   def pop(self, index):
     self.changed('pop: %d', index)
     return super(TrackedList, self).pop(index)
-
-
-def convert_to_tracked(obj, parent):
-  """Converts dictionaries and lists to TrackedDict and TrackedList types.
-  
-  This allows the new structure to track changes at arbitrary levels of nesting.
-  """
-  if type(obj) == dict:
-    obj = TrackedDict(obj)
-    obj.parent = parent
-  elif type(obj) == list:
-    obj = TrackedList(obj)
-    obj.parent = parent
-  return obj
