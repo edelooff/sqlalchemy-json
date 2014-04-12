@@ -100,11 +100,11 @@ class TrackedDict(TrackedObject, dict):
 
   def __setitem__(self, key, value):
     self.changed('__setitem__: %r=%r', key, value)
-    return super(TrackedDict, self).__setitem__(key, self.convert(value, self))
+    super(TrackedDict, self).__setitem__(key, self.convert(value, self))
 
   def __delitem__(self, key):
     self.changed('__delitem__: %r', key)
-    return super(TrackedDict, self).__delitem__(key)
+    super(TrackedDict, self).__delitem__(key)
 
   def clear(self):
     self.changed('clear')
@@ -133,21 +133,24 @@ class TrackedList(TrackedObject, list):
 
   def __setitem__(self, key, value):
     self.changed('__setitem__: %r=%r', key, value)
-    return super(TrackedList, self).__setitem__(key, self.convert(value, self))
+    super(TrackedList, self).__setitem__(key, self.convert(value, self))
 
   def __delitem__(self, key):
     self.changed('__delitem__: %r', key)
-    return super(TrackedList, self).__delitem__(key)
+    super(TrackedList, self).__delitem__(key)
 
   def append(self, item):
     self.changed('append: %r', item)
-    return super(TrackedList, self).append(self.convert(item, self))
+    super(TrackedList, self).append(self.convert(item, self))
 
   def extend(self, iterable):
     self.changed('extend: %r', iterable)
-    return super(TrackedList, self).extend(
-        self.convert_iterable(iterable, self))
+    super(TrackedList, self).extend(self.convert_iterable(iterable, self))
 
   def pop(self, index):
     self.changed('pop: %d', index)
     return super(TrackedList, self).pop(index)
+
+  def sort(self, cmp=None, key=None, reverse=False):
+    self.changed('sort')
+    super(TrackedList, self).sort(cmp=cmp, key=key, reverse=reverse)
