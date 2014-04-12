@@ -106,6 +106,18 @@ class TrackedDict(TrackedObject, dict):
     self.changed('__delitem__: %r', key)
     return super(TrackedDict, self).__delitem__(key)
 
+  def clear(self):
+    self.changed('clear')
+    super(TrackedDict, self).clear()
+
+  def pop(self, *key_and_default):
+    self.changed('pop: %r', key_and_default)
+    return super(TrackedDict, self).pop(*key_and_default)
+
+  def popitem(self):
+    self.changed('popitem')
+    return super(TrackedDict, self).popitem()
+
   def update(self, source=(), **kwds):
     self.changed('update(%r, %r)', source, kwds)
     super(TrackedDict, self).update(itertools.chain(
