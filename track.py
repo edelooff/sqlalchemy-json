@@ -64,6 +64,23 @@ class TrackedObject(object):
         return new
     return obj
 
+  @classmethod
+  def convert_iterable(cls, iterable, parent):
+    """Returns a generator that performs `_track` on every of its members."""
+    return (cls.convert(item, parent) for item in iterable)
+
+  @classmethod
+  def convert_iteritems(cls, iteritems, parent):
+    """Returns a generator like `_track_iterable` for 2-tuple item-iterators."""
+    return ((key, cls.convert(value, parent)) for key, value in iteritems)
+
+  @classmethod
+  def convert_mapping(cls, mapping, parent):
+    """Convenience method to track either a dict or a 2-tuple iterator."""
+    if isinstance(mapping, dict):
+      return cls.convert_iteritems(mapping.iteritems(), parent)
+    return cls.convert_iteritems(mapping, parent)
+
   def _repr(self):
     """Object representation that includes the memory address."""
     return '<%(namespace)s.%(type)s object at 0x%(address)0xd>' % {
@@ -71,36 +88,18 @@ class TrackedObject(object):
         'type': type(self).__name__,
         'address': id(self)}
 
-  def _track(self, value):
-    """Convencience method to call `convert_to_tracked` for a given value."""
-    return self.convert(value, self)
-
-  def _track_iterable(self, iterable):
-    """Returns a generator that performs `_track` on every of its members."""
-    return (self._track(item) for item in iterable)
-
-  def _track_iteritems(self, iteritems):
-    """Returns a generator like `_track_iterable` for 2-tuple item-iterators."""
-    return ((key, self._track(value)) for key, value in iteritems)
-
-  def _track_mapping(self, mapping):
-    """Convenience method to track either a dict or a 2-tuple iterator."""
-    if isinstance(mapping, dict):
-      return self._track_iteritems(mapping.iteritems())
-    return self._track_iteritems(mapping)
-
 
 @TrackedObject.register(dict)
 class TrackedDict(TrackedObject, dict):
   """A TrackedObject implementation of the basic dictionary."""
   def __init__(self, source=(), **kwds):
     super(TrackedDict, self).__init__(itertools.chain(
-        self._track_mapping(source),
-        self._track_mapping(kwds)))
+        self.convert_mapping(source, self),
+        self.convert_mapping(kwds, self)))
 
   def __setitem__(self, key, value):
     self.changed('__setitem__: %r=%r', key, value)
-    return super(TrackedDict, self).__setitem__(key, self._track(value))
+    return super(TrackedDict, self).__setitem__(key, self.convert(value, self))
 
   def __delitem__(self, key):
     self.changed('__delitem__: %r', key)
@@ -109,19 +108,19 @@ class TrackedDict(TrackedObject, dict):
   def update(self, source=(), **kwds):
     self.changed('update(%r, %r)', source, kwds)
     super(TrackedDict, self).update(itertools.chain(
-        self._track_mapping(source),
-        self._track_mapping(kwds)))
+        self.convert_mapping(source, self),
+        self.convert_mapping(kwds, self)))
 
 
 @TrackedObject.register(list)
 class TrackedList(TrackedObject, list):
   """A TrackedObject implementation of the basic list."""
   def __init__(self, iterable=()):
-    super(TrackedList, self).__init__(self._track_iterable(iterable))
+    super(TrackedList, self).__init__(self.convert_iterable(iterable, self))
 
   def __setitem__(self, key, value):
     self.changed('__setitem__: %r=%r', key, value)
-    return super(TrackedList, self).__setitem__(key, self._track(value))
+    return super(TrackedList, self).__setitem__(key, self.convert(value, self))
 
   def __delitem__(self, key):
     self.changed('__delitem__: %r', key)
@@ -129,11 +128,12 @@ class TrackedList(TrackedObject, list):
 
   def append(self, item):
     self.changed('append: %r', item)
-    return super(TrackedList, self).append(self._track(item))
+    return super(TrackedList, self).append(self.convert(item, self))
 
   def extend(self, iterable):
     self.changed('extend: %r', iterable)
-    return super(TrackedList, self).extend(self._track_iterable(iterable))
+    return super(TrackedList, self).extend(
+        self.convert_iterable(iterable, self))
 
   def pop(self, index):
     self.changed('pop: %d', index)
