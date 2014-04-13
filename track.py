@@ -15,11 +15,11 @@ import logging
 class TrackedObject(object):
   """A base class for delegated change-tracking."""
   _type_mapping = {}
-  parent = None
 
   def __init__(self, *args, **kwds):
     self.logger = logging.getLogger(type(self).__name__)
     self.logger.debug('%s: __init__' % self._repr())
+    self.parent = None
     super(TrackedObject, self).__init__(*args, **kwds)
 
   def changed(self, message=None, *args):
