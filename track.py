@@ -18,21 +18,21 @@ class TrackedObject(object):
 
   def __init__(self, *args, **kwds):
     self.logger = logging.getLogger(type(self).__name__)
-    self.logger.debug('%s: __init__' % self._repr())
+    self.logger.debug('%s: __init__', self._repr())
     self.parent = None
     super(TrackedObject, self).__init__(*args, **kwds)
 
   def changed(self, message=None, *args):
-    """Used to mark the object as changed.
+    """Marks the object as changed.
 
-    If a `parent` attribute is set, the `changed` method on the parent will also
-    be called, bubbling the change up to the top of the chain.
+    If a `parent` attribute is set, the `changed()` method on the parent will
+    be called, propagating the change notification up the chain.
 
     The message (if provided) will be debug logged.
     """
     if message is not None:
-      self.logger.debug('%s: %s' % (self._repr(), message % args))
-    self.logger.debug('%s: changed' % self._repr())
+      self.logger.debug('%s: %s', self._repr(), message % args)
+    self.logger.debug('%s: changed', self._repr())
     if self.parent is not None:
       self.parent.changed()
 
@@ -52,10 +52,14 @@ class TrackedObject(object):
 
   @classmethod
   def convert(cls, obj, parent):
-    """Converts objects to tracked types.
+    """Converts objects to registered tracked types
 
-    This allows the new structure to track changes and propagate them to the
-    provided parent.
+    This checks the type of the given object against the registered tracked
+    types. When a match is found, the given object will be converted to the
+    tracked type, its parent set to the provided parent, and returned.
+
+    If its type does not occur in the registered types mapping, the object
+    is returned unchanged.
     """
     obj_type = type(obj)
     for origin_type, replacement in cls._type_mapping.iteritems():
@@ -67,12 +71,12 @@ class TrackedObject(object):
 
   @classmethod
   def convert_iterable(cls, iterable, parent):
-    """Returns a generator that performs `_track` on every of its members."""
+    """Returns a generator that performs `convert` on every of its members."""
     return (cls.convert(item, parent) for item in iterable)
 
   @classmethod
   def convert_iteritems(cls, iteritems, parent):
-    """Returns a generator like `_track_iterable` for 2-tuple item-iterators."""
+    """Returns a generator like `convert_iterable` for 2-tuple iterators."""
     return ((key, cls.convert(value, parent)) for key, value in iteritems)
 
   @classmethod
@@ -83,7 +87,7 @@ class TrackedObject(object):
     return cls.convert_iteritems(mapping, parent)
 
   def _repr(self):
-    """Object representation that includes the memory address."""
+    """Simple object representation."""
     return '<%(namespace)s.%(type)s object at 0x%(address)0xd>' % {
         'namespace': __name__,
         'type': type(self).__name__,
