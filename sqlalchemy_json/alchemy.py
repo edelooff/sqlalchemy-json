@@ -8,7 +8,7 @@ import sqlalchemy
 from sqlalchemy.ext import mutable
 
 # Custom modules
-import track
+from . import track
 
 
 class NestedMutable(mutable.MutableDict, track.TrackedDict):
