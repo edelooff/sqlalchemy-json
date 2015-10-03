@@ -10,7 +10,8 @@ if __name__ == "__main__":
         url="https://github.com/edelooff/sqlalchemy-json",
         packages=find_packages(),
         install_requires=[
-            'sqlalchemy>=0.7'
+            'sqlalchemy>=0.7',
+            'sqlalchemy_utils',
         ],
         zip_safe=False,
         classifiers=[

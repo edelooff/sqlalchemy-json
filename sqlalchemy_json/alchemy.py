@@ -6,6 +6,7 @@ except ImportError:
 
 import sqlalchemy
 from sqlalchemy.ext import mutable
+from sqlalchemy_utils.types.json import JSONType
 
 # Custom modules
 from . import track
@@ -27,22 +28,11 @@ class NestedMutable(mutable.MutableDict, track.TrackedDict):
     return super(cls).coerce(key, value)
 
 
-class _JsonTypeDecorator(sqlalchemy.TypeDecorator):
-  """Enables JSON storage by encoding and decoding on the fly."""
-  impl = sqlalchemy.String
-
-  def process_bind_param(self, value, dialect):
-    return json.dumps(value)
-
-  def process_result_value(self, value, dialect):
-    return json.loads(value)
-
-
-class JsonObject(_JsonTypeDecorator):
+class JsonObject(JSONType):
   """JSON object type for SQLAlchemy with change tracking as base level."""
 
 
-class NestedJsonObject(_JsonTypeDecorator):
+class NestedJsonObject(JSONType):
   """JSON object type for SQLAlchemy with nested change tracking."""
 
 
