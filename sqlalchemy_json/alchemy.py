@@ -1,31 +1,45 @@
-# Third-party modules
-try:
-  import simplejson as json
-except ImportError:
-  import json
-
-import sqlalchemy
-from sqlalchemy.ext import mutable
+from sqlalchemy.ext.mutable import (
+    Mutable,
+    MutableDict)
 from sqlalchemy_utils.types.json import JSONType
 
-# Custom modules
-from . import track
+from . track import (
+    TrackedDict,
+    TrackedList)
 
 
-class NestedMutable(mutable.MutableDict, track.TrackedDict):
-  """SQLAlchemy `mutable` extension dictionary with nested change tracking."""
-  def __setitem__(self, key, value):
-    """Ensure that items set are converted to change-tracking types."""
-    super(NestedMutable, self).__setitem__(key, self.convert(value, self))
+class NestedMutableDict(TrackedDict, Mutable):
+    @classmethod
+    def coerce(cls, key, value):
+        if isinstance(value, cls):
+            return value
+        if isinstance(value, dict):
+            return cls(value)
+        return super(cls).coerce(key, value)
 
-  @classmethod
-  def coerce(cls, key, value):
-    """Convert plain dictionary to NestedMutable."""
-    if isinstance(value, cls):
-      return value
-    if isinstance(value, dict):
-      return cls(value)
-    return super(cls).coerce(key, value)
+
+class NestedMutableList(TrackedList, Mutable):
+    @classmethod
+    def coerce(cls, key, value):
+        if isinstance(value, cls):
+            return value
+        if isinstance(value, list):
+            return cls(value)
+        return super(cls).coerce(key, value)
+
+
+class NestedMutable(Mutable):
+    """SQLAlchemy `mutable` extension with nested change tracking."""
+    @classmethod
+    def coerce(cls, key, value):
+        """Convert plain dictionary to NestedMutable."""
+        if isinstance(value, cls):
+            return value
+        if isinstance(value, dict):
+            return NestedMutableDict.coerce(key, value)
+        if isinstance(value, list):
+            return NestedMutableList.coerce(key, value)
+        return super(cls).coerce(key, value)
 
 
 class JsonObject(JSONType):
@@ -36,5 +50,5 @@ class NestedJsonObject(JSONType):
   """JSON object type for SQLAlchemy with nested change tracking."""
 
 
-mutable.MutableDict.associate_with(JsonObject)
+MutableDict.associate_with(JsonObject)
 NestedMutable.associate_with(NestedJsonObject)

@@ -7,9 +7,10 @@ A function for automatic conversion of dicts and lists to their tracked
 counterparts is also included.
 """
 
-# Standard modules
 import itertools
 import logging
+
+from sqlalchemy.ext.mutable import Mutable
 
 
 class TrackedObject(object):
@@ -18,8 +19,8 @@ class TrackedObject(object):
 
   def __init__(self, *args, **kwds):
     self.logger = logging.getLogger(type(self).__name__)
-    self.logger.debug('%s: __init__', self._repr())
     self.parent = None
+    self.logger.debug('%s: __init__', self._repr())
     super(TrackedObject, self).__init__(*args, **kwds)
 
   def changed(self, message=None, *args):
@@ -35,6 +36,8 @@ class TrackedObject(object):
     self.logger.debug('%s: changed', self._repr())
     if self.parent is not None:
       self.parent.changed()
+    elif isinstance(self, Mutable):
+      super(TrackedObject, self).changed()
 
   @classmethod
   def register(cls, origin_type):
