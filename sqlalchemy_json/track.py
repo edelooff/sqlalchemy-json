@@ -151,6 +151,10 @@ class TrackedList(TrackedObject, list):
     self.changed('extend: %r', iterable)
     super(TrackedList, self).extend(self.convert_iterable(iterable, self))
 
+  def remove(self, value):
+    self.changed('remove: %r', value)
+    return super(TrackedList, self).remove(value)
+
   def pop(self, index):
     self.changed('pop: %d', index)
     return super(TrackedList, self).pop(index)
