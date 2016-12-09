@@ -29,7 +29,7 @@ class NestedMutable(mutable.MutableDict, track.TrackedDict):
 
 class _JsonTypeDecorator(sqlalchemy.TypeDecorator):
   """Enables JSON storage by encoding and decoding on the fly."""
-  impl = sqlalchemy.String
+  impl = sqlalchemy.LargeBinary
 
   def process_bind_param(self, value, dialect):
     return json.dumps(value)
@@ -48,3 +48,4 @@ class NestedJsonObject(_JsonTypeDecorator):
 
 mutable.MutableDict.associate_with(JsonObject)
 NestedMutable.associate_with(NestedJsonObject)
+
