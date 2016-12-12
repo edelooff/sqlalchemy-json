@@ -32,10 +32,10 @@ class _JsonTypeDecorator(sqlalchemy.TypeDecorator):
   impl = sqlalchemy.LargeBinary
 
   def process_bind_param(self, value, dialect):
-    return json.dumps(value)
+    return json.dumps(value).encode('utf-8')
 
   def process_result_value(self, value, dialect):
-    return json.loads(value)
+    return json.loads(value.decode('utf-8'))
 
 
 class JsonObject(_JsonTypeDecorator):
