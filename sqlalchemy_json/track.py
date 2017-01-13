@@ -13,12 +13,14 @@ from six import iteritems
 from sqlalchemy.ext.mutable import Mutable
 
 
+logger = logging.getLogger(__name__)
+
+
 class TrackedObject(object):
     """A base class for delegated change-tracking."""
     _type_mapping = {}
 
     def __init__(self, *args, **kwds):
-        self.logger = logging.getLogger(type(self).__name__)
         self.parent = None
         super(TrackedObject, self).__init__(*args, **kwds)
 
@@ -31,8 +33,8 @@ class TrackedObject(object):
         The message (if provided) will be debug logged.
         """
         if message is not None:
-            self.logger.debug('%s: %s', self._repr(), message % args)
-        self.logger.debug('%s: changed', self._repr())
+            logger.debug('%s: %s', self._repr(), message % args)
+        logger.debug('%s: changed', self._repr())
         if self.parent is not None:
             self.parent.changed()
         elif isinstance(self, Mutable):
