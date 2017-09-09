@@ -71,22 +71,19 @@ class TrackedObject(object):
         return new
     return obj
 
-  @classmethod
-  def convert_iterable(cls, iterable, parent):
-    """Returns a generator that performs `convert` on every of its members."""
-    return (cls.convert(item, parent) for item in iterable)
+  def convert_iterable(self, iterable):
+    """Generator to `convert` every member of the given iterable."""
+    return (self.convert(item, self) for item in iterable)
 
-  @classmethod
-  def convert_items(cls, items, parent):
-    """Returns a generator like `convert_iterable` for 2-tuple iterators."""
-    return ((key, cls.convert(value, parent)) for key, value in items)
+  def convert_items(self, items):
+    """Generator like `convert_iterable`, but for 2-tuple iterators."""
+    return ((key, self.convert(value, self)) for key, value in items)
 
-  @classmethod
-  def convert_mapping(cls, mapping, parent):
+  def convert_mapping(self, mapping):
     """Convenience method to track either a dict or a 2-tuple iterator."""
     if isinstance(mapping, dict):
-      return cls.convert_items(mapping.items(), parent)
-    return cls.convert_items(mapping, parent)
+      return self.convert_items(mapping.items())
+    return self.convert_items(mapping)
 
   def _repr(self):
     """Simple object representation."""
@@ -101,8 +98,8 @@ class TrackedDict(TrackedObject, dict):
   """A TrackedObject implementation of the basic dictionary."""
   def __init__(self, source=(), **kwds):
     super(TrackedDict, self).__init__(itertools.chain(
-        self.convert_mapping(source, self),
-        self.convert_mapping(kwds, self)))
+        self.convert_mapping(source),
+        self.convert_mapping(kwds)))
 
   def __setitem__(self, key, value):
     self.changed('__setitem__: %r=%r', key, value)
@@ -127,15 +124,15 @@ class TrackedDict(TrackedObject, dict):
   def update(self, source=(), **kwds):
     self.changed('update(%r, %r)', source, kwds)
     super(TrackedDict, self).update(itertools.chain(
-        self.convert_mapping(source, self),
-        self.convert_mapping(kwds, self)))
+        self.convert_mapping(source),
+        self.convert_mapping(kwds)))
 
 
 @TrackedObject.register(list)
 class TrackedList(TrackedObject, list):
   """A TrackedObject implementation of the basic list."""
   def __init__(self, iterable=()):
-    super(TrackedList, self).__init__(self.convert_iterable(iterable, self))
+    super(TrackedList, self).__init__(self.convert_iterable(iterable))
 
   def __setitem__(self, key, value):
     self.changed('__setitem__: %r=%r', key, value)
@@ -151,7 +148,7 @@ class TrackedList(TrackedObject, list):
 
   def extend(self, iterable):
     self.changed('extend: %r', iterable)
-    super(TrackedList, self).extend(self.convert_iterable(iterable, self))
+    super(TrackedList, self).extend(self.convert_iterable(iterable))
 
   def remove(self, value):
     self.changed('remove: %r', value)
