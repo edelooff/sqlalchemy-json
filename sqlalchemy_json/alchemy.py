@@ -43,11 +43,11 @@ class NestedMutable(Mutable):
 
 
 class JsonObject(JSONType):
-  """JSON object type for SQLAlchemy with change tracking as base level."""
+    """JSON object type for SQLAlchemy with change tracking as base level."""
 
 
 class NestedJsonObject(JSONType):
-  """JSON object type for SQLAlchemy with nested change tracking."""
+    """JSON object type for SQLAlchemy with nested change tracking."""
 
 
 MutableDict.associate_with(JsonObject)
