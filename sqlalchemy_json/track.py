@@ -7,9 +7,10 @@ A function for automatic conversion of dicts and lists to their tracked
 counterparts is also included.
 """
 
-# Standard modules
 import itertools
 import logging
+
+from sqlalchemy.ext.mutable import Mutable
 
 
 class TrackedObject(object):
@@ -18,8 +19,8 @@ class TrackedObject(object):
 
   def __init__(self, *args, **kwds):
     self.logger = logging.getLogger(type(self).__name__)
-    self.logger.debug('%s: __init__', self._repr())
     self.parent = None
+    self.logger.debug('%s: __init__', self._repr())
     super(TrackedObject, self).__init__(*args, **kwds)
 
   def changed(self, message=None, *args):
@@ -35,6 +36,8 @@ class TrackedObject(object):
     self.logger.debug('%s: changed', self._repr())
     if self.parent is not None:
       self.parent.changed()
+    elif isinstance(self, Mutable):
+      super(TrackedObject, self).changed()
 
   @classmethod
   def register(cls, origin_type):
@@ -61,10 +64,9 @@ class TrackedObject(object):
     If its type does not occur in the registered types mapping, the object
     is returned unchanged.
     """
-    obj_type = type(obj)
-    for origin_type, replacement in cls._type_mapping.iteritems():
-      if obj_type is origin_type:
-        new = replacement(obj)
+    replacement_type = cls._type_mapping.get(type(obj))
+    if replacement_type is not None:
+        new = replacement_type(obj)
         new.parent = parent
         return new
     return obj
@@ -75,16 +77,16 @@ class TrackedObject(object):
     return (cls.convert(item, parent) for item in iterable)
 
   @classmethod
-  def convert_iteritems(cls, iteritems, parent):
+  def convert_items(cls, items, parent):
     """Returns a generator like `convert_iterable` for 2-tuple iterators."""
-    return ((key, cls.convert(value, parent)) for key, value in iteritems)
+    return ((key, cls.convert(value, parent)) for key, value in items)
 
   @classmethod
   def convert_mapping(cls, mapping, parent):
     """Convenience method to track either a dict or a 2-tuple iterator."""
     if isinstance(mapping, dict):
-      return cls.convert_iteritems(mapping.iteritems(), parent)
-    return cls.convert_iteritems(mapping, parent)
+      return cls.convert_items(mapping.items(), parent)
+    return cls.convert_items(mapping, parent)
 
   def _repr(self):
     """Simple object representation."""
