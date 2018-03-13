@@ -35,6 +35,8 @@ class NestedMutable(Mutable):
     @classmethod
     def coerce(cls, key, value):
         """Convert plain dictionary to NestedMutable."""
+        if value is None:
+            return value
         if isinstance(value, cls):
             return value
         if isinstance(value, dict):
