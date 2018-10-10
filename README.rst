@@ -71,6 +71,12 @@ Dependencies
 Changelog
 =========
 
+0.2.2
+-----
+
+* Fixes a bug where assigning ``None`` to the column resulted in an error (https://github.com/edelooff/sqlalchemy-json/issues/10)
+
+
 0.2.1
 -----
 
@@ -94,4 +100,3 @@ Initial version. This initially carried a 1.0.0 version number but has never bee
 .. _mutable json recipe: http://docs.sqlalchemy.org/en/latest/core/custom_types.html#marshal-json-strings
 .. _sqlalchemy: https://www.sqlalchemy.org/
 .. _sqlalchemy-utils: https://sqlalchemy-utils.readthedocs.io/
-
