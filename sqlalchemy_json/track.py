@@ -20,7 +20,6 @@ class TrackedObject(object):
     def __init__(self, *args, **kwds):
         self.logger = logging.getLogger(type(self).__name__)
         self.parent = None
-        self.logger.debug('%s: __init__', self._repr())
         super(TrackedObject, self).__init__(*args, **kwds)
 
     def changed(self, message=None, *args):
