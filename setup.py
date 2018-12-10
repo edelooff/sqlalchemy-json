@@ -10,7 +10,7 @@ def contents(filename):
 
 setup(
     name='sqlalchemy-json',
-    version='0.2.2',
+    version='0.2.3',
     author='Elmer de Looff',
     author_email='elmer.delooff@gmail.com',
     description='JSON type with nested change tracking for SQLAlchemy',
