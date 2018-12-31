@@ -126,6 +126,16 @@ class TrackedDict(TrackedObject, dict):
             self.convert_mapping(source),
             self.convert_mapping(kwds)))
 
+    def setdefault(self, key, default=None):
+        if key in self:
+            return self[key]
+
+        # this calls __setitem__, which converts the value and calls changed()
+        self[key] = default
+        # the value at self[key] may be a new TrackedObject, so return
+        # self[key] instead of default
+        return self[key]
+
 
 @TrackedObject.register(list)
 class TrackedList(TrackedObject, list):
