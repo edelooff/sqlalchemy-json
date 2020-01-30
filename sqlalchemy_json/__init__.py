@@ -1,7 +1,7 @@
 from sqlalchemy.ext.mutable import (
     Mutable,
     MutableDict)
-from sqlalchemy_utils.types.json import JSONType
+from sqlalchemy.types import JSON
 
 from . track import (
     TrackedDict,
@@ -46,11 +46,11 @@ class NestedMutable(Mutable):
         return super(cls).coerce(key, value)
 
 
-class MutableJson(JSONType):
+class MutableJson(JSON):
     """JSON type for SQLAlchemy with change tracking at top level."""
 
 
-class NestedMutableJson(JSONType):
+class NestedMutableJson(JSON):
     """JSON type for SQLAlchemy with nested change tracking."""
 
 
