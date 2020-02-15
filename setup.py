@@ -10,7 +10,7 @@ def contents(filename):
 
 setup(
     name='sqlalchemy-json',
-    version='0.2.3',
+    version='0.3.0',
     author='Elmer de Looff',
     author_email='elmer.delooff@gmail.com',
     description='JSON type with nested change tracking for SQLAlchemy',
@@ -21,8 +21,7 @@ setup(
     packages=['sqlalchemy_json'],
     install_requires=[
         'six',
-        'sqlalchemy>=0.7',
-        'sqlalchemy_utils'],
+        'sqlalchemy>=0.7'],
     zip_safe=False,
     classifiers=[
         'Development Status :: 4 - Beta',
