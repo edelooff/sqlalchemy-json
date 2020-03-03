@@ -64,7 +64,6 @@ Had the articles model used ``MutableJson`` like in the previous example this co
 Dependencies
 ============
 
-* ``SQLAlchemy-utils`` for its existing and database-engine specific choice of either native or simulated JSON type;
 * ``six`` to support both Python 2 and 3.
 
 
@@ -76,6 +75,11 @@ Changelog
 
 * Fixes a bug where assigning ``None`` to the column resulted in an error (https://github.com/edelooff/sqlalchemy-json/issues/10)
 
+
+0.3.0
+-----
+
+* Switch to sqlalchemy.types.JSON and remove SQLAlchemy-utils
 
 0.2.1
 -----
@@ -99,4 +103,3 @@ Initial version. This initially carried a 1.0.0 version number but has never bee
 
 .. _mutable json recipe: http://docs.sqlalchemy.org/en/latest/core/custom_types.html#marshal-json-strings
 .. _sqlalchemy: https://www.sqlalchemy.org/
-.. _sqlalchemy-utils: https://sqlalchemy-utils.readthedocs.io/
