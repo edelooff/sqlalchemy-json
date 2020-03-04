@@ -73,7 +73,7 @@ Changelog
 0.3.0
 -----
 
-* Switch to sqlalchemy.types.JSON and remove SQLAlchemy-utils
+* Switches JSON base type to ``sqlalchemy.types.JSON`` from deprecated JSON type provided by SQLAlchemy-utils.
 
 0.2.2
 -----
@@ -103,3 +103,4 @@ Initial version. This initially carried a 1.0.0 version number but has never bee
 
 .. _mutable json recipe: http://docs.sqlalchemy.org/en/latest/core/custom_types.html#marshal-json-strings
 .. _sqlalchemy: https://www.sqlalchemy.org/
+.. _sqlalchemy-utils: https://sqlalchemy-utils.readthedocs.io/
