@@ -70,16 +70,16 @@ Dependencies
 Changelog
 =========
 
+0.3.0
+-----
+
+* Switch to sqlalchemy.types.JSON and remove SQLAlchemy-utils
+
 0.2.2
 -----
 
 * Fixes a bug where assigning ``None`` to the column resulted in an error (https://github.com/edelooff/sqlalchemy-json/issues/10)
 
-
-0.3.0
------
-
-* Switch to sqlalchemy.types.JSON and remove SQLAlchemy-utils
 
 0.2.1
 -----
