@@ -46,13 +46,16 @@ class NestedMutable(Mutable):
         return super(cls).coerce(key, value)
 
 
-class MutableJson(JSON):
-    """JSON type for SQLAlchemy with change tracking at top level."""
+def mutable_json_type(dbtype=JSON, nested=False):
+    """Type creator for (optionally nested) mutable JSON column types.
+
+    The default backend data type is sqlalchemy.types.JSON, but can be set to
+    any other type by providing the `dbtype` parameter.
+    """
+    mutable_type = NestedMutable if nested else MutableDict
+    return mutable_type.as_mutable(dbtype)
 
 
-class NestedMutableJson(JSON):
-    """JSON type for SQLAlchemy with nested change tracking."""
-
-
-MutableDict.associate_with(MutableJson)
-NestedMutable.associate_with(NestedMutableJson)
+# Base mutable JSON types
+MutableJson = mutable_json_type()
+NestedMutableJson = mutable_json_type(nested=True)
