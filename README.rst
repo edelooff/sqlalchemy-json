@@ -61,6 +61,18 @@ With this in place, an existing article is loaded and its current references ins
 Had the articles model used ``MutableJson`` like in the previous example this code would have failed. This is because the top level dictionary is never altered directly. The *nested* mutable ensures the change happening at the lower level *bubbles up* to the outermost container.
 
 
+Non-native JSON / other serialization types
+===========================================
+
+By default, sqlalchemy-json uses the JSON column type provided by SQLAlchemy (specifically ``sqlalchemy.types.JSON``.)
+If you wish to use another type (e.g. PostgreSQL's ``JSONB``), your database does not natively support JSON (e.g. SQLite), or you wish to serialize to a format other than JSON, you'll need to provide a different backing type.
+
+This is done by using the utility function ``mutable_json_type``. This type creator function accepts two parameters:
+
+* ``dbtype`` controls the database type used. This can be an existing type provided by SQLAlchemy or SQLALchemy-utils_, or an `augmented type`_ to provide serialization to any other format;
+* ``nested`` controls whether the created type is made mutable based on ``MutableDict`` or ``NestedMutable`` (defaults to ``False`` for ``MutableDict``).
+
+
 Dependencies
 ============
 
@@ -69,6 +81,11 @@ Dependencies
 
 Changelog
 =========
+
+0.4.0
+-----
+
+* Adds a type creation function to allow for custom or alternate serialization types. This allows for a way around the regression in SQLite compatibility introduced by v0.3.0.
 
 0.3.0
 -----
@@ -101,6 +118,7 @@ Changelog
 Initial version. This initially carried a 1.0.0 version number but has never been released on PyPI.
 
 
+.. _augmented type: https://docs.sqlalchemy.org/en/13/core/custom_types.html#augmenting-existing-types
 .. _mutable json recipe: http://docs.sqlalchemy.org/en/latest/core/custom_types.html#marshal-json-strings
 .. _sqlalchemy: https://www.sqlalchemy.org/
 .. _sqlalchemy-utils: https://sqlalchemy-utils.readthedocs.io/
