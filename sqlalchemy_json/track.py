@@ -169,6 +169,6 @@ class TrackedList(TrackedObject, list):
         self.changed('pop: %d', index)
         return super(TrackedList, self).pop(index)
 
-    def sort(self, cmp=None, key=None, reverse=False):
+    def sort(self, /, *, key=None, reverse=False):
         self.changed('sort')
-        super(TrackedList, self).sort(cmp=cmp, key=key, reverse=reverse)
+        super(TrackedList, self).sort(key=key, reverse=reverse)
