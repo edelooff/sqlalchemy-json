@@ -7,7 +7,7 @@ from . track import (
     TrackedDict,
     TrackedList)
 
-__all__ = 'MutableJson', 'NestedMutableJson'
+__all__ = 'MutableJson', 'NestedMutableJson', 'mutable_json_type'
 
 
 class NestedMutableDict(TrackedDict, Mutable):
