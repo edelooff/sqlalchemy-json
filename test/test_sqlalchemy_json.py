@@ -1,4 +1,5 @@
 import pickle
+import sys
 
 import pytest
 
@@ -104,6 +105,7 @@ def test_nested_pickling():
     assert one_reloaded is not two_reloaded
 
 
+@pytest.mark.skipif(sys.version_info < (3, 9), reason="Python 3.9+ required")
 def test_dict_merging(session, article):
     article.references['github.com'] |= {'someone/somerepo': 10}
     session.commit()
