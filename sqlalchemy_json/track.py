@@ -103,6 +103,10 @@ class TrackedDict(TrackedObject, dict):
             self.convert_mapping(source),
             self.convert_mapping(kwds)))
 
+    def __ior__(self, other):
+        self.changed('__ior__: %r', other)
+        return super(TrackedDict, self).__ior__(self.convert(other, self))
+
     def __setitem__(self, key, value):
         self.changed('__setitem__: %r=%r', key, value)
         super(TrackedDict, self).__setitem__(key, self.convert(value, self))

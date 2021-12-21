@@ -102,3 +102,15 @@ def test_nested_pickling():
     assert one_reloaded["numbers"].parent is one_reloaded
     assert two_reloaded["numbers"].parent is two_reloaded
     assert one_reloaded is not two_reloaded
+
+
+def test_dict_merging(session, article):
+    article.references['github.com'] |= {'someone/somerepo': 10}
+    session.commit()
+    assert article.references == {
+        'github.com': {
+            'edelooff/sqlalchemy-json': 4,
+            'zzzeek/sqlalchemy': [1, 2, 3],
+            'someone/somerepo': 10,
+        },
+    }
