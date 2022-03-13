@@ -65,12 +65,35 @@ Non-native JSON / other serialization types
 ===========================================
 
 By default, sqlalchemy-json uses the JSON column type provided by SQLAlchemy (specifically ``sqlalchemy.types.JSON``.)
-If you wish to use another type (e.g. PostgreSQL's ``JSONB``), your database does not natively support JSON (e.g. SQLite), or you wish to serialize to a format other than JSON, you'll need to provide a different backing type.
+If you wish to use another type (e.g. PostgreSQL's ``JSONB``), your database does not natively support JSON (e.g. versions of SQLite before 3.37.2/), or you wish to serialize to a format other than JSON, you'll need to provide a different backing type.
 
 This is done by using the utility function ``mutable_json_type``. This type creator function accepts two parameters:
 
 * ``dbtype`` controls the database type used. This can be an existing type provided by SQLAlchemy or SQLALchemy-utils_, or an `augmented type`_ to provide serialization to any other format;
 * ``nested`` controls whether the created type is made mutable based on ``MutableDict`` or ``NestedMutable`` (defaults to ``False`` for ``MutableDict``).
+
+.. code-block:: python
+
+    import json
+
+    from sqlalchemy import JSON, String, TypeDecorator
+    from sqlalchemy.dialects.postgresql import JSONB
+    from sqlalchemy_json import mutable_json_type
+
+    class JsonString(TypeDecorator):
+        """Enables JSON storage by encoding and decoding on the fly."""
+
+        impl = String
+
+        def process_bind_param(self, value, dialect):
+            return json.dumps(value)
+
+        def process_result_value(self, value, dialect):
+            return json.loads(value)
+
+
+    postgres_jsonb_mutable = mutable_json_type(dbtype=JSONB)
+    string_backed_nested_mutable = mutable)json_type(dbtype=JsonString, nested=True)
 
 
 Dependencies
@@ -81,6 +104,12 @@ Dependencies
 
 Changelog
 =========
+
+0.5.0
+-----
+* Fixes a lingering Python 3 compatibility issue (``cmp`` parameter for ``TrackedList.sort``)
+* Adds pickling and unpickling support (https://github.com/edelooff/sqlalchemy-json/pull/28)
+* Adds tracking for dictionary in-place updates (https://github.com/edelooff/sqlalchemy-json/pull/33)
 
 0.4.0
 -----
