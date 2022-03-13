@@ -105,6 +105,12 @@ Dependencies
 Changelog
 =========
 
+0.5.0
+-----
+* Fixes a lingering Python 3 compatibility issue (``cmp`` parameter for ``TrackedList.sort``)
+* Adds pickling and unpickling support (https://github.com/edelooff/sqlalchemy-json/pull/28)
+* Adds tracking for dictionary in-place updates (https://github.com/edelooff/sqlalchemy-json/pull/33)
+
 0.4.0
 -----
 
