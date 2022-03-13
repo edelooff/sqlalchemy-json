@@ -1,13 +1,9 @@
-from sqlalchemy.ext.mutable import (
-    Mutable,
-    MutableDict)
+from sqlalchemy.ext.mutable import Mutable, MutableDict
 from sqlalchemy.types import JSON
 
-from . track import (
-    TrackedDict,
-    TrackedList)
+from .track import TrackedDict, TrackedList
 
-__all__ = 'MutableJson', 'NestedMutableJson', 'mutable_json_type'
+__all__ = "MutableJson", "NestedMutableJson", "mutable_json_type"
 
 
 class NestedMutableDict(TrackedDict, Mutable):
@@ -32,6 +28,7 @@ class NestedMutableList(TrackedList, Mutable):
 
 class NestedMutable(Mutable):
     """SQLAlchemy `mutable` extension with nested change tracking."""
+
     @classmethod
     def coerce(cls, key, value):
         """Convert plain dictionary to NestedMutable."""

@@ -24,7 +24,7 @@ Base = declarative_base()
 
 
 class Author(Base):
-    __tablename__ = 'author'
+    __tablename__ = "author"
 
     id = Column(Integer, primary_key=True)
     name = Column(Text)
@@ -32,10 +32,10 @@ class Author(Base):
 
 
 class Article(Base):
-    __tablename__ = 'article'
+    __tablename__ = "article"
 
     id = Column(Integer, primary_key=True)
-    author = Column(ForeignKey('author.name'))
+    author = Column(ForeignKey("author.name"))
     content = Column(Text)
     references = Column(NestedMutableJson)
 
@@ -54,19 +54,31 @@ def session():
 
 @pytest.fixture
 def author(session):
-    author = Author(name="John Doe", handles={'twitter': '@JohnDoe', 'facebook': 'JohnDoe'})
+    author = Author(
+        name="John Doe",
+        handles={"twitter": "@JohnDoe", "facebook": "JohnDoe"},
+    )
     session.add(author)
     session.commit()
     session.refresh(author)
-    assert author.name == 'John Doe'
-    assert author.handles['twitter'] == '@JohnDoe'
+    assert author.name == "John Doe"
+    assert author.handles["twitter"] == "@JohnDoe"
     return author
 
 
 @pytest.fixture
 def article(session, author):
-    references = {'github.com': {'edelooff/sqlalchemy-json': 4, 'zzzeek/sqlalchemy': [1, 2, 3]}}
-    article = Article(author=author.name, content="very important", references=references)
+    references = {
+        "github.com": {
+            "edelooff/sqlalchemy-json": 4,
+            "zzzeek/sqlalchemy": [1, 2, 3],
+        }
+    }
+    article = Article(
+        author=author.name,
+        content="very important",
+        references=references,
+    )
     session.add(article)
     session.commit()
     session.refresh(article)
@@ -75,17 +87,17 @@ def article(session, author):
 
 
 def test_basic_change_tracking(session, author):
-    author.handles['twitter'] = '@JDoe'
+    author.handles["twitter"] = "@JDoe"
     session.commit()
-    assert author.handles['twitter'] == '@JDoe'
+    assert author.handles["twitter"] == "@JDoe"
 
 
 def test_nested_change_tracking(session, article):
-    article.references['github.com']['edelooff/sqlalchemy-json'] = 5
-    article.references['github.com']['zzzeek/sqlalchemy'].append(4)
+    article.references["github.com"]["edelooff/sqlalchemy-json"] = 5
+    article.references["github.com"]["zzzeek/sqlalchemy"].append(4)
     session.commit()
-    assert article.references['github.com']['edelooff/sqlalchemy-json'] == 5
-    assert article.references['github.com']['zzzeek/sqlalchemy'] == [1, 2, 3, 4]
+    assert article.references["github.com"]["edelooff/sqlalchemy-json"] == 5
+    assert article.references["github.com"]["zzzeek/sqlalchemy"] == [1, 2, 3, 4]
 
 
 def test_nested_pickling():
@@ -107,12 +119,12 @@ def test_nested_pickling():
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="Python 3.9+ required")
 def test_dict_merging(session, article):
-    article.references['github.com'] |= {'someone/somerepo': 10}
+    article.references["github.com"] |= {"someone/somerepo": 10}
     session.commit()
     assert article.references == {
-        'github.com': {
-            'edelooff/sqlalchemy-json': 4,
-            'zzzeek/sqlalchemy': [1, 2, 3],
-            'someone/somerepo': 10,
+        "github.com": {
+            "edelooff/sqlalchemy-json": 4,
+            "zzzeek/sqlalchemy": [1, 2, 3],
+            "someone/somerepo": 10,
         },
     }
