@@ -103,6 +103,11 @@ def test_nested_change_tracking(session, article):
 def test_nested_pickling():
     one = NestedMutableDict({"numbers": [1, 2, 3, 4]})
     two = NestedMutableDict({"numbers": [5, 6, 7]})
+    
+    # Force _parents WeakKeyDict creation
+    one._parents
+    two._parents
+    
     one_reloaded = pickle.loads(pickle.dumps(one))
     two_reloaded = pickle.loads(pickle.dumps(two))
     assert one == one_reloaded
