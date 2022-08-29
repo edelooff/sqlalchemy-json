@@ -6,7 +6,14 @@ from .track import TrackedDict, TrackedList
 __all__ = "MutableJson", "NestedMutableJson", "mutable_json_type"
 
 
-class NestedMutableDict(TrackedDict, Mutable):
+class _PickleMixin:
+    def __getstate__(self):
+        d = self.__dict__.copy()
+        d.pop("_parents", None)
+        return d
+
+
+class NestedMutableDict(TrackedDict, Mutable, _PickleMixin):
     @classmethod
     def coerce(cls, key, value):
         if isinstance(value, cls):
@@ -16,7 +23,7 @@ class NestedMutableDict(TrackedDict, Mutable):
         return super(cls).coerce(key, value)
 
 
-class NestedMutableList(TrackedList, Mutable):
+class NestedMutableList(TrackedList, Mutable, _PickleMixin):
     @classmethod
     def coerce(cls, key, value):
         if isinstance(value, cls):
