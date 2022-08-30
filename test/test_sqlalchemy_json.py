@@ -101,20 +101,29 @@ def test_nested_change_tracking(session, article):
 
 
 def test_nested_pickling():
-    one = NestedMutableDict({"numbers": [1, 2, 3, 4]})
-    two = NestedMutableDict({"numbers": [5, 6, 7]})
+    one = NestedMutableDict({"numbers": [1, 2, 3, {"4": 4}]})
+    two = NestedMutableList([5, 6, 7, {"numbers": [8, 9, 10]}])
+
+    # Force evaluation of _parents property
+    one._parents
+    two._parents
+
     one_reloaded = pickle.loads(pickle.dumps(one))
     two_reloaded = pickle.loads(pickle.dumps(two))
     assert one == one_reloaded
     assert two == two_reloaded
 
     one_reloaded["numbers"].append(5)
-    assert one_reloaded["numbers"] == [1, 2, 3, 4, 5]
-    assert one["numbers"] == [1, 2, 3, 4]
-
+    assert one_reloaded["numbers"] == [1, 2, 3, {"4": 4}, 5]
+    assert one["numbers"] == [1, 2, 3, {"4": 4}]
     assert one_reloaded["numbers"].parent is one_reloaded
-    assert two_reloaded["numbers"].parent is two_reloaded
-    assert one_reloaded is not two_reloaded
+    assert one_reloaded["numbers"][3].parent is one_reloaded["numbers"]
+
+    two_reloaded.append(11)
+    assert two_reloaded == [5, 6, 7, {"numbers": [8, 9, 10]}, 11]
+    assert two == [5, 6, 7, {"numbers": [8, 9, 10]}]
+    assert two_reloaded[3].parent is two_reloaded
+    assert two_reloaded[3]["numbers"].parent is two_reloaded[3]
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="Python 3.9+ required")
