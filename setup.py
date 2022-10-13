@@ -20,9 +20,7 @@ setup(
     url="https://github.com/edelooff/sqlalchemy-json",
     packages=["sqlalchemy_json"],
     python_requires=">= 3.6",
-    install_requires=[
-        "six",
-        "sqlalchemy>=0.7"],
+    install_requires=["sqlalchemy>=0.7"],
     zip_safe=False,
     classifiers=[
         "Development Status :: 4 - Beta",
