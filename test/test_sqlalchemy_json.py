@@ -17,6 +17,7 @@ from sqlalchemy_json import (
     MutableJson,
     NestedMutableDict,
     NestedMutableJson,
+    NestedMutableList,
 )
 
 SQLALCHEMY_DATABASE_URL = "sqlite://"
