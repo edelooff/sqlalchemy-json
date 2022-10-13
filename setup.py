@@ -19,6 +19,7 @@ setup(
     license="BSD",
     url="https://github.com/edelooff/sqlalchemy-json",
     packages=["sqlalchemy_json"],
+    python_requires=">= 3.6",
     install_requires=[
         "six",
         "sqlalchemy>=0.7"],
@@ -28,6 +29,5 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         "Topic :: Database"])
