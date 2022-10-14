@@ -93,7 +93,7 @@ This is done by using the utility function ``mutable_json_type``. This type crea
 
 
     postgres_jsonb_mutable = mutable_json_type(dbtype=JSONB)
-    string_backed_nested_mutable = mutable)json_type(dbtype=JsonString, nested=True)
+    string_backed_nested_mutable = mutable_json_type(dbtype=JsonString, nested=True)
 
 
 Dependencies
