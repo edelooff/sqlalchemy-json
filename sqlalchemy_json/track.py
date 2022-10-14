@@ -9,7 +9,6 @@ counterparts is also included.
 import logging
 from itertools import chain
 
-from six import iteritems
 from sqlalchemy.ext.mutable import Mutable
 
 
@@ -87,7 +86,7 @@ class TrackedObject(object):
     def convert_mapping(self, mapping):
         """Convenience method to track either a dict or a 2-tuple iterator."""
         if isinstance(mapping, dict):
-            return self.convert_items(iteritems(mapping))
+            return self.convert_items(iter(mapping.items()))
         return self.convert_items(mapping)
 
     def _repr(self):

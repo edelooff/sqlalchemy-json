@@ -99,7 +99,7 @@ This is done by using the utility function ``mutable_json_type``. This type crea
 Dependencies
 ============
 
-* ``six`` to support both Python 2 and 3.
+* ``sqlalchemy``
 
 
 Changelog
