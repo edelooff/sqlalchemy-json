@@ -1,0 +1,28 @@
+name: run
+
+on: [push]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.6, "pypy-3.6", 3.7, 3.8, 3.9, "pypy-3.9", "3.10", "3.11.0-rc.2"]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        pip install -e .
+        pip install pytest
+
+    - name: Run test suite
+      run: |
+        pytest
+
