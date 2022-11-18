@@ -16,6 +16,8 @@ class _PickleMixin:
 class NestedMutableDict(TrackedDict, Mutable, _PickleMixin):
     @classmethod
     def coerce(cls, key, value):
+        if value is None:
+            return value
         if isinstance(value, cls):
             return value
         if isinstance(value, dict):
@@ -26,6 +28,8 @@ class NestedMutableDict(TrackedDict, Mutable, _PickleMixin):
 class NestedMutableList(TrackedList, Mutable, _PickleMixin):
     @classmethod
     def coerce(cls, key, value):
+        if value is None:
+            return value
         if isinstance(value, cls):
             return value
         if isinstance(value, list):
