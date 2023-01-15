@@ -15,6 +15,7 @@ setup(
     author_email="elmer.delooff@gmail.com",
     description="JSON type with nested change tracking for SQLAlchemy",
     long_description=contents("README.rst"),
+    long_description_content_type="text/x-rst",
     keywords="sqlalchemy json mutable",
     license="BSD",
     url="https://github.com/edelooff/sqlalchemy-json",
