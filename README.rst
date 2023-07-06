@@ -105,6 +105,13 @@ Dependencies
 Changelog
 =========
 
+0.6.0
+-----
+
+* Fixes pickling support (https://github.com/edelooff/sqlalchemy-json/issues/36)
+* Drops python 2.x support (previously claimed, but already broken for some time)
+* Removes test runners for CPython 3.6 since Github actions support has been dropped
+
 0.5.0
 -----
 * Fixes a lingering Python 3 compatibility issue (``cmp`` parameter for ``TrackedList.sort``)
