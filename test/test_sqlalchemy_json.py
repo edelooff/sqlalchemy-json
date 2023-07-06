@@ -1,3 +1,4 @@
+import copy
 import pickle
 import sys
 
@@ -125,6 +126,23 @@ def test_nested_pickling():
     assert two == [5, 6, 7, {"numbers": [8, 9, 10]}]
     assert two_reloaded[3].parent is two_reloaded
     assert two_reloaded[3]["numbers"].parent is two_reloaded[3]
+
+
+def test_deepcopy(session, article):
+    """Modifying a copy of a MutableJSON instance does not affect the source."""
+    new_repo = "someone/newrepo"
+    assert new_repo not in article.references["github.com"]
+
+    article_copy = Article(
+        author=article.author,
+        content=article.content,
+        references=copy.deepcopy(article.references),
+    )
+    article_copy.references["github.com"][new_repo] = 10
+    article_copy.references["modified"] = True
+
+    assert new_repo not in article.references["github.com"]
+    assert not session.dirty
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="Python 3.9+ required")
