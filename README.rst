@@ -101,6 +101,19 @@ Dependencies
 
 * ``sqlalchemy``
 
+Development
+===========
+
+Here's how to setup your development environment:
+
+.. code-block:: shell
+
+    python -m venv .venv
+    . .venv/bin/activate
+    pip install -e ".[dev]""
+    # run tests
+    pytest
+
 
 Changelog
 =========
