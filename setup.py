@@ -23,7 +23,7 @@ setup(
     python_requires=">= 3.6",
     install_requires=["sqlalchemy>=0.7"],
     extras_require={
-        'dev': ['pytest']
+        "dev": ["pytest"]
     },
     zip_safe=False,
     classifiers=[

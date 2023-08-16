@@ -110,7 +110,7 @@ Here's how to setup your development environment:
 
     python -m venv .venv
     . .venv/bin/activate
-    pip install -e ".[dev]""
+    pip install -e ".[dev]"
     # run tests
     pytest
 
