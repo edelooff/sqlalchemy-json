@@ -1,4 +1,4 @@
-from sqlalchemy.ext.mutable import Mutable, MutableDict
+from sqlalchemy.ext.mutable import Mutable, MutableDict, MutableList
 from sqlalchemy.types import JSON
 
 from .track import TrackedDict, TrackedList
@@ -50,6 +50,20 @@ class NestedMutable(Mutable):
             return NestedMutableList.coerce(key, value)
         return super(cls).coerce(key, value)
 
+class MutableListOrDict(Mutable):
+    """SQLAlchemy `mutable` extension with change tracking for a single-depth list or dict."""
+
+    @classmethod
+    def coerce(cls, key, value):
+        if value is None:
+            return value
+        if isinstance(value, cls):
+            return value
+        if isinstance(value, dict):
+            return MutableDict.coerce(key, value)
+        if isinstance(value, list):
+            return MutableList.coerce(key, value)
+        return super(cls).coerce(key, value)
 
 def mutable_json_type(dbtype=JSON, nested=False):
     """Type creator for (optionally nested) mutable JSON column types.
@@ -57,7 +71,7 @@ def mutable_json_type(dbtype=JSON, nested=False):
     The default backend data type is sqlalchemy.types.JSON, but can be set to
     any other type by providing the `dbtype` parameter.
     """
-    mutable_type = NestedMutable if nested else MutableDict
+    mutable_type = NestedMutable if nested else MutableListOrDict
     return mutable_type.as_mutable(dbtype)
 
 
