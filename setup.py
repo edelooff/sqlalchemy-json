@@ -22,6 +22,9 @@ setup(
     packages=["sqlalchemy_json"],
     python_requires=">= 3.6",
     install_requires=["sqlalchemy>=0.7"],
+    extras_require={
+        "dev": ["pytest"]
+    },
     zip_safe=False,
     classifiers=[
         "Development Status :: 4 - Beta",
