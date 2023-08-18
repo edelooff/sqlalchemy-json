@@ -50,6 +50,7 @@ class NestedMutable(Mutable):
             return NestedMutableList.coerce(key, value)
         return super(cls).coerce(key, value)
 
+
 class MutableListOrDict(Mutable):
     """SQLAlchemy `mutable` extension with change tracking for a single-depth list or dict."""
 

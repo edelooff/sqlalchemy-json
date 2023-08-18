@@ -79,7 +79,6 @@ def author_with_list(session):
 
     assert author.name == "John Doe"
     assert author.handles == ["@JohnDoe", "JohnDoe"]
-
     return author
 
 @pytest.fixture
@@ -176,3 +175,4 @@ def test_mutable_json_list(session, author_with_list):
     session.commit()
 
     assert author_with_list.handles == ["@JohnDoe", "JohnDoe", "@mike_bianco"]
+    
