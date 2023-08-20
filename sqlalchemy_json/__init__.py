@@ -52,7 +52,7 @@ class NestedMutable(Mutable):
 
 
 class MutableListOrDict(Mutable):
-    """SQLAlchemy `mutable` extension with change tracking for a single-depth list or dict."""
+    """SQLAlchemy `mutable` extension with single-level change tracking list or dict."""
 
     @classmethod
     def coerce(cls, key, value):
@@ -65,6 +65,7 @@ class MutableListOrDict(Mutable):
         if isinstance(value, list):
             return MutableList.coerce(key, value)
         return super(cls).coerce(key, value)
+
 
 def mutable_json_type(dbtype=JSON, nested=False):
     """Type creator for (optionally nested) mutable JSON column types.
