@@ -14,6 +14,22 @@ class _PickleMixin:
         return d
 
 
+class MutableContainer(Mutable):
+    """SQLAlchemy `mutable` extension with single-level change tracking list or dict."""
+
+    @classmethod
+    def coerce(cls, key, value):
+        if value is None:
+            return value
+        if isinstance(value, cls):
+            return value
+        if isinstance(value, dict):
+            return MutableDict.coerce(key, value)
+        if isinstance(value, list):
+            return MutableList.coerce(key, value)
+        return super(cls).coerce(key, value)
+
+
 class NestedMutableDict(TrackedDict, Mutable, _PickleMixin):
     @classmethod
     def coerce(cls, key, value):
@@ -48,22 +64,6 @@ class NestedMutableContainer(Mutable):
             return NestedMutableDict.coerce(key, value)
         if isinstance(value, list):
             return NestedMutableList.coerce(key, value)
-        return super(cls).coerce(key, value)
-
-
-class MutableContainer(Mutable):
-    """SQLAlchemy `mutable` extension with single-level change tracking list or dict."""
-
-    @classmethod
-    def coerce(cls, key, value):
-        if value is None:
-            return value
-        if isinstance(value, cls):
-            return value
-        if isinstance(value, dict):
-            return MutableDict.coerce(key, value)
-        if isinstance(value, list):
-            return MutableList.coerce(key, value)
         return super(cls).coerce(key, value)
 
 
