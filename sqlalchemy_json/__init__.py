@@ -34,12 +34,12 @@ class NestedMutableList(TrackedList, Mutable, _PickleMixin):
         return super(cls).coerce(key, value)
 
 
-class NestedMutable(Mutable):
+class NestedMutableContainer(Mutable):
     """SQLAlchemy `mutable` extension with nested change tracking."""
 
     @classmethod
     def coerce(cls, key, value):
-        """Convert plain dictionary to NestedMutable."""
+        """Convert plain dictionary to NestedMutableContainer."""
         if value is None:
             return value
         if isinstance(value, cls):
@@ -51,7 +51,7 @@ class NestedMutable(Mutable):
         return super(cls).coerce(key, value)
 
 
-class MutableListOrDict(Mutable):
+class MutableContainer(Mutable):
     """SQLAlchemy `mutable` extension with single-level change tracking list or dict."""
 
     @classmethod
@@ -73,7 +73,7 @@ def mutable_json_type(dbtype=JSON, nested=False):
     The default backend data type is sqlalchemy.types.JSON, but can be set to
     any other type by providing the `dbtype` parameter.
     """
-    mutable_type = NestedMutable if nested else MutableListOrDict
+    mutable_type = NestedMutableContainer if nested else MutableContainer
     return mutable_type.as_mutable(dbtype)
 
 
