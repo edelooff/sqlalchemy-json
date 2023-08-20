@@ -132,6 +132,12 @@ Here's how to setup your development environment:
 Changelog
 =========
 
+0.7.0
+-----
+
+* Adds support for top-level list for ``MutableJson``, rather than having that support only be available in the *nested* variant (https://github.com/edelooff/sqlalchemy-json/pull/51)
+* Adds ``pytest`` as development dependency
+
 0.6.0
 -----
 

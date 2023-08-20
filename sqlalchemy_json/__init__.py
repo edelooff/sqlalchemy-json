@@ -4,7 +4,7 @@ from sqlalchemy.types import JSON
 from .track import TrackedDict, TrackedList
 
 __all__ = "MutableJson", "NestedMutableJson", "mutable_json_type"
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 
 
 class _PickleMixin:
