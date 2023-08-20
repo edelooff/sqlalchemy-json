@@ -21,6 +21,20 @@ This is essentially the SQLAlchemy `mutable JSON recipe`_. We define a simple au
         name = Column(Text)
         handles = Column(MutableJson)
 
+Or, using the declarative mapping style:
+
+.. code-block:: python
+
+    class Category(Base):
+        __tablename__ = "categories"
+
+        id = mapped_column(Integer, primary_key=True)
+        created_at: Mapped[DateTime] = mapped_column(DateTime, default=datetime.now)
+        updated_at: Mapped[DateTime] = mapped_column(
+            DateTime, default=datetime.now, onupdate=datetime.now
+        )
+        keywords: Mapped[list[str]] = mapped_column(MutableJson)
+
 The example below loads one of the existing authors and retrieves the mapping of social media handles. The error in the twitter handle is then corrected and committed. The change is detected by SQLAlchemy and the appropriate ``UPDATE`` statement is generated.
 
 .. code-block:: python

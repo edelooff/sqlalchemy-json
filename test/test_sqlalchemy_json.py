@@ -67,6 +67,19 @@ def author(session):
     assert author.handles["twitter"] == "@JohnDoe"
     return author
 
+@pytest.fixture
+def author_with_list(session):
+    author = Author(
+        name="John Doe",
+        handles=["@JohnDoe", "JohnDoe"],
+    )
+    session.add(author)
+    session.commit()
+    session.refresh(author)
+
+    assert author.name == "John Doe"
+    assert author.handles == ["@JohnDoe", "JohnDoe"]
+    return author
 
 @pytest.fixture
 def article(session, author):
@@ -156,3 +169,10 @@ def test_dict_merging(session, article):
             "someone/somerepo": 10,
         },
     }
+
+def test_mutable_json_list(session, author_with_list):
+    author_with_list.handles.append("@mike_bianco")
+    session.commit()
+
+    assert author_with_list.handles == ["@JohnDoe", "JohnDoe", "@mike_bianco"]
+    
