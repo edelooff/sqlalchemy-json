@@ -1,4 +1,5 @@
 from sqlalchemy.ext.mutable import Mutable, MutableDict, MutableList
+from sqlalchemy.sql import expression
 from sqlalchemy.types import JSON
 
 from .track import TrackedDict, TrackedList
@@ -19,8 +20,8 @@ class MutableContainer(Mutable):
 
     @classmethod
     def coerce(cls, key, value):
-        if value is None:
-            return value
+        if value is None or isinstance(value, expression.Null):
+            return None
         if isinstance(value, cls):
             return value
         if isinstance(value, dict):
@@ -56,8 +57,8 @@ class NestedMutableContainer(Mutable):
     @classmethod
     def coerce(cls, key, value):
         """Convert plain dictionary to NestedMutableContainer."""
-        if value is None:
-            return value
+        if value is None or isinstance(value, expression.Null):
+            return None
         if isinstance(value, cls):
             return value
         if isinstance(value, dict):
