@@ -10,6 +10,7 @@ from sqlalchemy import (
     Integer,
     Text,
     create_engine,
+    null,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -178,3 +179,12 @@ def test_mutable_json_list(session, author_with_list):
     session.commit()
 
     assert author_with_list.handles == ["@JohnDoe", "JohnDoe", "@mike_bianco"]
+
+
+def test_null_none(session):
+    """
+    Make sure library can handle both None and null() as JSON value
+    """
+    for value in (None, null()):
+        author = Author(name="John Doe", handles=value)
+        Article(author=author.name, content="very important", references=value)
